@@ -1,0 +1,59 @@
+/* This plugin style_private.css file will be added to the public folder, but no automated import of the file will be generated */
+
+div#newsletter,
+div#newsletterSubscribers,
+div#newsletterStats,
+div#newsletterMail,
+div#newsletterConfig,
+div#newsletterBulkadd {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid gray;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 60px;
+  max-width: 500px;
+  padding: 10px;
+}
+div#newsletter #newsletterFront {
+  text-align: center;
+}
+div.newsletterLinks {
+  text-align: center
+}
+div.newsletterLinks li {
+  font-size: 1.3rem;
+}
+
+div#newsletterSubscribers {
+  max-width: 1200px;
+}
+div#newsletterSubscribers table,
+div#newsletterStats table {
+  width: 100%;
+}
+
+div#newsletterStats {
+  max-width: 800px;
+}
+
+div#newsletterMail {
+  max-width: 1200px;
+}
+div#newsletterMail textarea {
+  width: 100%;
+  min-height: 100px;
+}
+div#newsletterMail textarea#message {
+  min-height: 300px;
+}
+div#newsletterMail .infoBox {
+  max-width: 300px;
+}
+div#newsletterMail .button {
+  width: 100%;
+}
+
+div#newsletterConfig {
+  max-width: 1200px;
+}

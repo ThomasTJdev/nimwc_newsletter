@@ -1,0 +1,347 @@
+#? stdtmpl | standard
+#
+#
+#
+#proc genNewsletter*(c: var TData): string =
+# result = ""
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<div id="newsletter">
+
+  <div id="newsletterFront">
+    <h1>Newsletter settings</h1>
+
+    # let (n, v, d, u) = pluginExtractDetails("newsletter")
+    <div id="pluginDetails">
+      <hr>
+      <div> <b>Package:</b> ${n}</div>
+      <div> <b>Version:</b> ${v}</div>
+      <div> <b>Description:</b><br>${d}</div>
+      <div> <b>URL:</b> <a href="${u}">${u}</a></div>
+      <hr>
+    </div>
+
+  </div>
+
+  <div class="newsletterLinks">
+    <h2>Links</h2>
+    <ul>
+      <li><a href="/newsletter/config">Configuration</a></li>
+      <li><a href="/newsletter/mail">New newsletter</a></li>
+      <li><a href="/newsletter/bulkadd">Add subscriber</a></li>
+      <li><a href="/newsletter/subscribers">Subscribers</a></li>
+      <li><a href="/newsletter/stats">Statistics</a></li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="subscribe">
+    <h2>Include the following code to subscribe users</h2>
+    <pre><code>
+&lt;div id=&quot;newsletterSubscribe&quot; class=&quot;box&quot; style=&quot;max-width: 300px;margin-left: auto; margin-right: auto;padding-top:20px;&quot;&gt;
+  &lt;form method=&quot;post&quot; action=&quot;/newsletter/signup&quot;&gt;
+    &lt;label&gt;Name&lt;/label&gt;
+    &lt;input type=&quot;text&quot; required name=&quot;name&quot; class=&quot;input is-small&quot;&gt;
+    &lt;br&gt;
+    &lt;br&gt;
+    &lt;label&gt;Email&lt;/label&gt;
+    &lt;input type=&quot;email&quot; required name=&quot;email&quot; class=&quot;input is-small&quot;&gt;
+    &lt;br&gt;
+    &lt;br&gt;
+    &lt;button type=&quot;submit&quot; class=&quot;button is-link&quot;&gt;Subscribe&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/div&gt;        
+    </code></pre>
+  </div>
+
+</div>
+#end proc
+#
+#
+#
+#proc genNewsletterMain*(c: var TData, content: string): string =
+# result = ""
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<div id="newsletter">
+  ${content}
+</div>
+#end proc
+#
+#
+#
+#proc genNewsletterBulkadd*(): string =
+# result = ""
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<div id="newsletterBulkadd">
+  <div class="box">
+    <form method="post" action="/newsletter/bulkadd">
+      <p>Bulk add subscribers</p>
+      <p>Format them: email;name, e.g. john@mail.com;John Doe</p>
+      <p>Status will be set to confirmed - no email confirmation is used</p>
+      <br>
+      <textarea name="bulkadd" class="textarea"></textarea>
+      <br>
+      <button type="submit" class="button is-link">Save</button>
+    </form>
+  </div>
+</div>
+#end proc
+#
+#
+#
+#proc genNewsletterConfig*(db: DbConn, c: var TData): string =
+# result = ""
+# let header = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "header")
+# let css = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "css")
+# let footer = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "footer")
+# let welcome = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "welcome")
+# let confirm = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirm")
+# let confirmEmail = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirmEmail")
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<div id="newsletterConfig">
+  <form method="post" action="/newsletter/config/update">
+    <h2>Update configuration</h2>
+
+    <br>
+
+    <div class="box">
+      <p>Header</p>
+      <i>Include $$1 to use custom CSS</i>
+      <textarea name="header" class="textarea">${header}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Custom CSS</p>
+      <textarea name="css" class="textarea">${css}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Footer</p>
+      <i>Include $$1 and $$2 for unsubscribe link</i>
+      <textarea name="footer" class="textarea">${footer}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Welcome mail</p>
+      <i>Send to user when email is confirmed. Empty = Disabled</i>
+      <textarea name="welcome" class="textarea">${welcome}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Confirm message</p>
+      <i>After registrating, this message is shown</i>
+      <textarea name="confirm" class="textarea">${confirm}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Confirm mail</p>
+      <i>Mail including confirmation link. $$1 = Name, $$2 = Website title, $$3 = Confirmation link</i>
+      <textarea name="confirmEmail" class="textarea">${confirmEmail}</textarea>
+    </div>
+
+    <br>
+
+    <button type="submit" class="button is-link">Save</button>
+  </form>
+</div>
+#end proc
+#
+#
+#
+#
+#proc genNewsletterSubscribers*(db: DbConn, c: var TData): string =
+# result = ""
+# let persons = getAllRows(db, sql"SELECT id, name, email, status, confirmcode, creation FROM newsletter_subscribers ORDER BY email ASC")
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<div id="newsletterSubscribers">
+  <h1>Newsletter subscribers</h1>
+
+  <p>
+    There are ${persons.len()} persons subscribed.
+  </p>
+
+  <table class="table has-border">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Creation</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+#     for person in persons:
+        <tr>
+          <td>${person[0]}</td>
+          <td>${person[1]}</td>
+          <td>${person[2]}</td>
+          <td>${person[3]}</td>
+          <td>${epochDate(person[5], "YYYY-MM-DD")}</td>
+          <td><a href="/newsletter/unsubscribe?email=${person[2]}&confirmcode=${person[4]}">Delete</a></td>
+        </tr>
+#     end for
+    </tbody>
+  </table>
+</div>
+#end proc
+#
+#
+#
+#
+#proc genNewsletterStats*(db: DbConn, c: var TData): string =
+# result = ""
+# let stats = getAllRows(db, sql"SELECT id, subscribers, creation, subject FROM newsletter_stats ORDER BY id DESC")
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<div id="newsletterStats">
+  <h1>Newsletter stats</h1>
+
+  <p>
+    There are ${stats.len()} saved newsletters.
+  </p>
+  <br>
+  <table class="table has-border">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Subject</th>
+        <th>Subscribers</th>
+        <th>Creation</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+#     for stat in stats:
+        <tr>
+          <td>${stat[0]}</td>
+          <td>${stat[3]}</td>
+          <td>${stat[1]}</td>
+          <td>${epochDate(stat[2], "YYYY-MM-DD HH:mm")}</td>
+          <td><a href="/newsletter/stats/view?id=${stat[0]}">View</a></td>
+        </tr>
+#     end for
+    </tbody>
+  </table>
+</div>
+#end proc
+#
+#
+#
+#
+#proc genNewsletterMail*(db: DbConn, c: var TData): string =
+# result = ""
+# let persons = getAllRows(db, sql"SELECT id FROM newsletter_subscribers")
+<div id="save" data-ischanged="0" style="display: none;"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" defer></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/codemirror.css" integrity="sha256-o/v/5fOniPHMAww4EAIfRBFV0SeoqksPrY0Yq5x+wSM=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/theme/monokai.min.css" integrity="sha256-6ov3WWd9ybfZPeJBlXBgQuD/aLhTRCEp5kBhqD9ke0o=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/codemirror.min.js" integrity="sha256-U/4XQwZXDFDdAHjIZt1Lm7sFfmMiFDZzFYprq6XJ0gk=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/mode/css/css.min.js" integrity="sha256-YVb7n24DLwrjN0DghcwJYL17MI/X7e3c4EJZr6PwNdY=" crossorigin="anonymous"></script>
+
+<script src="/js/codemirror_custom.js" defer></script>
+
+<script src="/js/editors.js" defer></script>
+
+<link rel="stylesheet" href="/css/newsletter_private.css">
+<script src="/js/newsletter_private.js" defer></script>
+
+<div id="newsletterMail">
+  <h1>Newsletter mail</h1>
+
+  <p>
+    There are ${persons.len()} emails in your subscriber list.
+  </p>
+
+  <hr>
+
+  <div class="box infoBox">
+    <p>Preview the email</p>
+    <button class="newsletterView button is-link is-small">Preview</button>
+  </div>
+
+  <br>
+
+  <div class="box infoBox">
+    <p>Send a test email</p>
+    <input type="email" class="testemail" placeholder="Testmail">
+    <br><br>
+    <button class="newsletterTest button is-link is-small">Send test</button>
+  </div>
+
+  <br>
+
+  <div class="box infoBox">
+    <p>Send the email to all subscribers</p>
+    <button class="newsletterSend button is-warning is-small">Send</button>
+  </div>
+
+  <br>
+
+  <div class="box">
+    <form action="/newsletter/mail/preview" method="get">
+      <p>Subject (ASCII)</p>
+      <input class="subject input is-small" type="text" name="subject" style="max-width: 300px;" placeholder="Mail subject">
+      <br>
+      <br>
+      <p>Mail content (HTML)</p>
+      <i>Insert $$1 to show person name, insert $$2 to show person email</i>
+      <textarea id="message" name="message"></textarea>
+    </form>
+  </div>
+
+  <hr>
+
+  <div>
+    <h3>Config data</h3>
+    <p>The data below will be used. To change it go to <a href="/newsletter/config">the settings page</a>.</p>
+
+#   let header = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "header")
+#   let css = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "css")
+#   let footer = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "footer")
+
+    <h4>Header</h4>
+    <textarea disabled="disabled">${header}</textarea>
+    <br>
+    <h4>Custom CSS</h4>
+    <textarea disabled="disabled">${css}</textarea>
+    <br>
+    <h4>Footer</h4>
+    <textarea disabled="disabled">${footer}</textarea>
+  </div>
+  <div id="notifySaved">
+  </div>
+</div>
+#end proc
+#
+#
+#
+#proc genNewsletterSubscribe*(): string =
+# result = ""
+<div id="newsletterSubscribe" class="box" style="max-width: 300px;margin-left: auto; margin-right: auto;padding-top:20px;">
+  <form method="post" action="/newsletter/signup">
+    <label>Name</label>
+    <input type="text" required name="name" class="input is-small">
+    <br>
+    <br>
+    <label>Email</label>
+    <input type="email" required name="email" class="input is-small">
+    <br>
+    <br>
+    <button type="submit" class="button is-link">Subscribe</button>
+  </form>
+</div>
+#end proc
