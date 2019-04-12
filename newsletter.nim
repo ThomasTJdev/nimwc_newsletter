@@ -107,7 +107,7 @@ proc newsletterSignUp*(db: DbConn, email, name: string, bulkAdd = false): string
   if bulkAdd:
     exec(db, sql"INSERT INTO newsletter_subscribers (name, email, status, confirmCode) VALUES (?, ?, ?, ?)", name, email, "confirmed", confirmCode)
     return "OK"
-  
+
   exec(db, sql"INSERT INTO newsletter_subscribers (name, email, status, confirmCode) VALUES (?, ?, ?, ?)", name, email, "unconfirmed", confirmCode)
 
   let confirmMsg = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirm")
@@ -137,7 +137,7 @@ proc newsletterSignConfirm*(db: DbConn, email, confirmCodeUser: string): string 
     exec(db, sql"UPDATE newsletter_subscribers SET status = ? WHERE id = ?", "confirmed", userID)
 
     let welcomeEmail = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "welcomeEmail")
-    
+
     if welcomeEmail == "":
       return "Welcome. Thank you for signing up!"
     else:
@@ -170,9 +170,9 @@ const header = """<!DOCTYPE html>
   $1
 </head>
 <body style="font-size: 16px;font-family:'Roboto';font-style:normal;font-weight:400;src:local('Roboto'),local('Roboto-Regular'),url(https://fonts.gstatic.com/s/roboto/v18/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215">
-  <div style=background:#171921;border-color:#123d6d;height:70px;width:100%;margin-bottom:20px;padding-top:5px;padding-bottom:5px;text-align:center>
-      <a href="https://cxmanager.live">
-        <img src="https://cxmanager.live/images/logo/navbar_logo.png" alt="Cx Manager" />
+  <div style=background:#ededed;border-color:#123d6d;height:70px;width:100%;margin-bottom:20px;padding-top:5px;padding-bottom:5px;text-align:center>
+      <a href="https://nimwc.org">
+        <img src="https://nimwc.org/images/logo/NimWC_logo_blue.png" alt="NimWC" />
       </a>
   </div>
   <div style="padding:0 10px">"""
@@ -185,7 +185,7 @@ const footer = """</div>
   </div>
   <div style="background:#171921;border-color:#123d6d;height:35px;width:100%;margin-top:5px;text-align:center">
     <div style="height:100%;font-size:18px;margin-left:15px;line-height:36px">
-      <a href="https://cxmanager.live" style="color:white">www.cxmanager.live</a>
+      <a href="https://nimwc.org" style="color:white">www.nimwc.org</a>
     </div>
   </div>
 </body>
