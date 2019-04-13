@@ -136,13 +136,16 @@ proc newsletterSignConfirm*(db: DbConn, email, confirmCodeUser: string): string 
 
     exec(db, sql"UPDATE newsletter_subscribers SET status = ? WHERE id = ?", "confirmed", userID)
 
+    let welcome = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "welcome")
     let welcomeEmail = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "welcomeEmail")
+    let userName = getValue(db, sql"SELECT name FROM newsletter_subscribers WHERE id = ?", userID)
 
     if welcomeEmail == "":
-      return "Welcome. Thank you for signing up!"
+      return welcome
     else:
-      asyncCheck sendMailNow(title & " - welcome!", newsletterGenMail(db, email, welcomeEmail), email)
-      return "Welcome. Thank you for signing up! We have send you a welcome email."
+      let message = welcomeEmail % [userName, title]
+      asyncCheck sendMailNow(title & " - welcome!", newsletterGenMail(db, email, message), email)
+      return welcome
 
   else:
     return "An error occurred. Please contact the <a href=\"mailto:" & emailSupport & "\">" & emailSupport & "</a>."

@@ -50,7 +50,7 @@
     &lt;br&gt;
     &lt;button type=&quot;submit&quot; class=&quot;button is-link&quot;&gt;Subscribe&lt;/button&gt;
   &lt;/form&gt;
-&lt;/div&gt;        
+&lt;/div&gt;
     </code></pre>
   </div>
 
@@ -95,6 +95,7 @@
 # let css = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "css")
 # let footer = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "footer")
 # let welcome = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "welcome")
+# let welcomeEmail = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "welcomeEmail")
 # let confirm = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirm")
 # let confirmEmail = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirmEmail")
 <link rel="stylesheet" href="/css/newsletter_private.css">
@@ -105,7 +106,7 @@
     <br>
 
     <div class="box">
-      <p>Header</p>
+      <p>Mail header</p>
       <i>Include $$1 to use custom CSS</i>
       <textarea name="header" class="textarea">${header}</textarea>
     </div>
@@ -113,24 +114,16 @@
     <br>
 
     <div class="box">
-      <p>Custom CSS</p>
+      <p>Mail custom CSS</p>
       <textarea name="css" class="textarea">${css}</textarea>
     </div>
 
     <br>
 
     <div class="box">
-      <p>Footer</p>
+      <p>Mail footer</p>
       <i>Include $$1 and $$2 for unsubscribe link</i>
       <textarea name="footer" class="textarea">${footer}</textarea>
-    </div>
-
-    <br>
-
-    <div class="box">
-      <p>Welcome mail</p>
-      <i>Send to user when email is confirmed. Empty = Disabled</i>
-      <textarea name="welcome" class="textarea">${welcome}</textarea>
     </div>
 
     <br>
@@ -147,6 +140,22 @@
       <p>Confirm mail</p>
       <i>Mail including confirmation link. $$1 = Name, $$2 = Website title, $$3 = Confirmation link</i>
       <textarea name="confirmEmail" class="textarea">${confirmEmail}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Welcome message</p>
+      <i>When email is confirmed</i>
+      <textarea name="welcome" class="textarea">${welcome}</textarea>
+    </div>
+
+    <br>
+
+    <div class="box">
+      <p>Welcome mail</p>
+      <i>Send to user when email is confirmed. Empty = Disabled. $$1 = Name, $$2 = Website title.</i>
+      <textarea name="welcomeEmail" class="textarea">${welcomeEmail}</textarea>
     </div>
 
     <br>

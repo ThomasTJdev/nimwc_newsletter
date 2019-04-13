@@ -5,7 +5,7 @@
 
     resp genMain(c, genNewsletter(c))
 
-  
+
   get "/newsletter/config":
     createTFD()
     if not c.loggedIn or c.rank notin [Admin, Moderator]:
@@ -13,7 +13,7 @@
 
     resp genMain(c, genNewsletterConfig(db, c))
 
-  
+
   post "/newsletter/config/update":
     createTFD()
     if not c.loggedIn or c.rank notin [Admin, Moderator]:
@@ -22,9 +22,10 @@
     exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"header", "header")
     exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"css", "css")
     exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"footer", "footer")
-    exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"welcome", "welcome")
     exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"confirm", "confirm")
     exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"confirmEmail", "confirmEmail")
+    exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"welcome", "welcome")
+    exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"welcomeEmail", "welcomeEmail")
     exec(db, sql"UPDATE newsletter_settings SET value = ? WHERE element = ?", @"footer", "footer")
 
     redirect("/newsletter/config")
@@ -34,7 +35,7 @@
     createTFD()
     resp genMain(c, genNewsletterSubscribe())
 
-  
+
   post "/newsletter/signup":
     createTFD()
     resp genMain(c, genNewsletterMain(c, newsletterSignUp(db, @"email", @"name")))
