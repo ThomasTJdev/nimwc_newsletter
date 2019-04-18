@@ -119,6 +119,19 @@ proc newsletterSignUp*(db: DbConn, email, name: string, bulkAdd = false): string
 
   asyncCheck sendMailNow(title & " - Confirm email", newsletterGenMail(db, email, message), email)
 
+  when defined(adminnotify):
+    let subscriberUrl = "<a href=\"" & website & "/newsletter/subscribers\">subscribers</a>"
+    let adminMessage = """There's a new subscriber to your newsletter!
+    <br>
+    <br>
+    $1 has registered with $2 at $3.
+    <br>
+    <br>
+    You can with all the subscribers at $4.
+    <br>""" % [name, email, $now(), subscriberUrl]
+
+    asyncCheck sendAdminMailNow("New subscriber", adminMessage)
+
   return confirmMsg
 
 
