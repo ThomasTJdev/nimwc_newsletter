@@ -5,7 +5,7 @@
 #proc genNewsletter*(c: var TData): string =
 # result = ""
 <link rel="stylesheet" href="/css/newsletter_private.css">
-<div id="newsletter">
+<div id="newsletter" class="plugin">
 
   <div id="newsletterFront">
     <h1>Newsletter settings</h1>
@@ -62,7 +62,7 @@
 #proc genNewsletterMain*(c: var TData, content: string): string =
 # result = ""
 <link rel="stylesheet" href="/css/newsletter_private.css">
-<div id="newsletter">
+<div id="newsletter" class="plugin">
   ${content}
 </div>
 #end proc
@@ -72,7 +72,7 @@
 #proc genNewsletterBulkadd*(): string =
 # result = ""
 <link rel="stylesheet" href="/css/newsletter_private.css">
-<div id="newsletterBulkadd">
+<div id="newsletterBulkadd" class="plugin">
   <div class="box">
     <form method="post" action="/newsletter/bulkadd">
       <p>Bulk add subscribers</p>
@@ -99,7 +99,7 @@
 # let confirm = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirm")
 # let confirmEmail = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "confirmEmail")
 <link rel="stylesheet" href="/css/newsletter_private.css">
-<div id="newsletterConfig">
+<div id="newsletterConfig" class="plugin">
   <form method="post" action="/newsletter/config/update">
     <h2>Update configuration</h2>
 
@@ -122,7 +122,7 @@
 
     <div class="box">
       <p>Mail footer</p>
-      <i>Include $$1 and $$2 for unsubscribe link</i>
+      <i>Including unsubscribing link. $$1 = Email, $$2 = Confirm code, $$3 = Website root.</i>
       <textarea name="footer" class="textarea">${footer}</textarea>
     </div>
 
@@ -172,7 +172,7 @@
 # result = ""
 # let persons = getAllRows(db, sql"SELECT id, name, email, status, confirmcode, creation FROM newsletter_subscribers ORDER BY email ASC")
 <link rel="stylesheet" href="/css/newsletter_private.css">
-<div id="newsletterSubscribers">
+<div id="newsletterSubscribers" class="plugin">
   <h1>Newsletter subscribers</h1>
 
   <p>
@@ -198,7 +198,7 @@
           <td>${person[2]}</td>
           <td>${person[3]}</td>
           <td>${epochDate(person[5], "YYYY-MM-DD")}</td>
-          <td><a href="/newsletter/unsubscribe?email=${person[2]}&confirmcode=${person[4]}">Delete</a></td>
+          <td><a href="/newsletter/unsubscribe?email=${person[2]}&confirmcode=${person[4]}" onclick="return confirm('This will delete the user?')">Delete</a></td>
         </tr>
 #     end for
     </tbody>
@@ -213,7 +213,7 @@
 # result = ""
 # let stats = getAllRows(db, sql"SELECT id, subscribers, creation, subject FROM newsletter_stats ORDER BY id DESC")
 <link rel="stylesheet" href="/css/newsletter_private.css">
-<div id="newsletterStats">
+<div id="newsletterStats" class="plugin">
   <h1>Newsletter stats</h1>
 
   <p>
@@ -268,7 +268,7 @@
 <link rel="stylesheet" href="/css/newsletter_private.css">
 <script src="/js/newsletter_private.js" defer></script>
 
-<div id="newsletterMail">
+<div id="newsletterMail" class="plugin">
   <h1>Newsletter mail</h1>
 
   <p>
@@ -340,7 +340,7 @@
 #
 #proc genNewsletterSubscribe*(): string =
 # result = ""
-<div id="newsletterSubscribe" class="box" style="max-width: 300px;margin-left: auto; margin-right: auto;padding-top:20px;">
+<div id="newsletterSubscribe" class="box plugin" style="max-width: 300px;margin-left: auto; margin-right: auto;padding-top:20px;">
   <form method="post" action="/newsletter/signup">
     <label>Name</label>
     <input type="text" required name="name" class="input is-small">
