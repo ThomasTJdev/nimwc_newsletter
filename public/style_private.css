@@ -12,6 +12,7 @@ div#newsletterBulkadd {
   margin: 60px auto 150px auto;
   max-width: 500px;
   padding: 10px;
+  color: black;
 }
 div#newsletter #newsletterFront {
   text-align: center;
