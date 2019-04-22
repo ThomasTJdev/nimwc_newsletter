@@ -185,7 +185,7 @@ const header = """<!DOCTYPE html>
   <title></title>
   $1
 </head>
-<body style="font-size: 16px;font-family:'Roboto';font-style:normal;font-weight:400;src:local('Roboto'),local('Roboto-Regular'),url(https://fonts.gstatic.com/s/roboto/v18/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215">
+<body style="font-size: 16px;font-family:'Roboto','Open Sans', 'Helvetica Neue', Helvetica, sans-serif;font-style:normal;font-weight:400;src:local('Roboto'),local('Roboto-Regular'),url(https://fonts.gstatic.com/s/roboto/v18/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215">
   <div style=background:#ededed;border-color:#123d6d;height:70px;width:100%;margin-bottom:20px;padding-top:5px;padding-bottom:5px;text-align:center>
       <a href="https://nimwc.org">
         <img src="https://nimwc.org/images/logo/NimWC_logo_blue.png" alt="NimWC" />
