@@ -41,10 +41,6 @@ proc pluginInfo() =
 pluginInfo()
 
 
-
-include "html.tmpl"
-
-
 proc newsletterGenMail*(db: DbConn, email, message: string): string =
   let header = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "header")
   let css = getValue(db, sql"SELECT value FROM newsletter_settings WHERE element = ?", "css")
@@ -52,11 +48,7 @@ proc newsletterGenMail*(db: DbConn, email, message: string): string =
 
   let headerFormat = header % [css]
 
-  let confirmCode = getValue(db, sql"SELECT confirmCode FROM newsletter_subscribers WHERE email = ?", email)
-
-  let footerFormat = footer % [email, confirmCode, website]
-
-  return $(headerFormat & message & footerFormat)
+  return $(headerFormat & message & footer)
 
 
 proc newsletterSaveStats*(db: DbConn, subject, mailContent: string) =
@@ -70,7 +62,13 @@ proc newsletterSaveStats*(db: DbConn, subject, mailContent: string) =
 proc newsletterSendTest*(db: DbConn, subject, message, email: string) {.async.} =
   ## Sends a testemail to the specified email
 
-  asyncCheck sendMailNow(subject, newsletterGenMail(db, email, message), email)
+  let person = getRow(db, sql"SELECT email, confirmCode, name FROM newsletter_subscribers WHERE email = ?", email)
+
+  let unsubscribeLink = "<a href='$3/newsletter/unsubscribe?email=$1&confirmcode=$2'>Unsubscribe</a>".format(person[0], person[1], website)
+
+  let messageFormat = message % [person[2], person[0], unsubscribeLink]
+
+  asyncCheck sendMailNow(subject, newsletterGenMail(db, email, messageFormat), email)
 
 
 proc newsletterSendNewsletter*(db: DbConn, subject, message: string) {.async.} =
@@ -86,11 +84,11 @@ proc newsletterSendNewsletter*(db: DbConn, subject, message: string) {.async.} =
   newsletterSaveStats(db, subject, headerFormat & message & footer)
 
   for person in persons:
-    let footerFormat = footer % [person[0], person[1], website]
+    let unsubscribeLink = "<a href='$3/newsletter/unsubscribe?email=$1&confirmcode=$2'>Unsubscribe</a>".format(person[0], person[1], website)
 
-    let messageFormat = message % [person[2], person[0]]
+    let messageFormat = message % [person[2], person[0], unsubscribeLink]
 
-    asyncCheck sendMailNow(subject, headerFormat & messageFormat & footerFormat, person[0])
+    asyncCheck sendMailNow(subject, headerFormat & messageFormat & footer, person[0])
 
     discard sleepAsync(200)
 
@@ -177,49 +175,65 @@ proc newsletterUnsubscribe*(db: DbConn, email, confirmCodeUser: string): string 
     return "Your user was not found. Please send a mail to <a href=\"mailto:" & emailSupport & "\">, and we'll delete your email manually"
 
 
+const headerLogoExample* = """
+<div style=background:#ededed;border-color:#123d6d;height:70px;width:100%;padding-top:5px;padding-bottom:5px;text-align:center>
+        <a href="https://nimwc.org">
+          <img src="https://nimwc.org/images/logo/NimWC_logo_blue.png" alt="NimWC" style="height: 70px;"/>
+        </a>
+      </div>"""
+
+const footerLogoExample* = """
+<div style="text-align: center;font-style: italic;">
+        <p style="margin-bottom: 0;">
+          $3
+        </p>
+      </div>
+      <div style="background:#ededed;border-color:#123d6d;height:35px;width:100%;margin-top:5px;text-align:center">
+        <div style="height:100%;font-size:18px;margin-left:15px;line-height:36px">
+          <a href="https://NimWC.org" style="color:black;">www.NimWC.org</a>
+        </div>
+      </div>"""
+
+const mailTemplate* = """
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
+  <tr id="header">
+    <td>
+      $1
+    </td>
+  </tr>
+
+  <tr id="middle">
+    <td>
+      $2
+    </td>
+  </tr>
+
+  <tr id="footer">
+    <td>
+      $3
+    </td>
+  </tr>
+</table>
+"""
 
 const header = """<!DOCTYPE html>
 <html lang=EN style="3D&quot;background:#FAFAFA;min-height:100%=">
 <head>
   <meta charset=UTF-8>
   <meta content="width=device-width, initial-scale=1.0" name=viewport>
-  <title></title>
+  <title>NimWC</title>
   $1
 </head>
-<body style="font-size: 16px;font-family:'Roboto','Open Sans', 'Helvetica Neue', Helvetica, sans-serif;font-style:normal;font-weight:400;src:local('Roboto'),local('Roboto-Regular'),url(https://fonts.gstatic.com/s/roboto/v18/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215">
-  <div style=background:#ededed;border-color:#123d6d;height:70px;width:100%;margin-bottom:20px;padding-top:5px;padding-bottom:5px;text-align:center>
-      <a href="https://nimwc.org">
-        <img src="https://nimwc.org/images/logo/NimWC_logo_blue.png" alt="NimWC" />
-      </a>
-  </div>
-  <div style="padding:0 10px">"""
+<body style="font-size: 16px;font-family:'Roboto','Open Sans', 'Helvetica Neue', Helvetica, sans-serif;font-style:normal;font-weight:400;src:local('Roboto'),local('Roboto-Regular'),url(https://fonts.gstatic.com/s/roboto/v18/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215">"""
 
-const footer = """</div>
-  <div style="text-align: center;font-style: italic;margin-top:20px;">
-    <p style="margin-bottom: 0;">
-      <a href="$3/newsletter/unsubscribe?email=$1&confirmcode=$2">Unsubscribe</a>
-    </p>
-  </div>
-  <div style="background:#171921;border-color:#123d6d;height:35px;width:100%;margin-top:5px;text-align:center">
-    <div style="height:100%;font-size:18px;margin-left:15px;line-height:36px">
-      <a href="https://nimwc.org" style="color:white">www.nimwc.org</a>
-    </div>
-  </div>
-</body>
+const footer = """</body>
 </html>"""
 
-const css = """<style>table{border-spacing: 0;}</style>"""
+const css = ""
 
-const confirm = "Thank you for registrating. We have send you a confirmation email. Please click on the link in the email to activate your account."
+const confirm = mailTemplate.format("Thank you for registrating.", "We have send you a confirmation email.", "Please click on the link in the email to activate your account.")
 
-const confirmEmail = """Welcome $1
-<br><br>
-Please click on the link below to subscribe to $2 newsletter.
-<br><br>
-<b>Confirmation link:</b>
-<br>
-<a href="$3">$3</a>
-<br>"""
+const confirmEmail = mailTemplate.format("Welcome $1", "Please click on the link below to subscribe to $2 newsletter.", "<b>Confirmation link:</b><br><a href='$3'>$3</a><br>")
 
 const welcome = """Welcome. Thank you for signing up!"""
 
@@ -265,6 +279,11 @@ const
       creation   $2            NOT NULL           default $1,
       modified   $2            NOT NULL           default $1
     );""".format(sql_now, sql_timestamp, sql_id))
+
+
+
+include "html.tmpl"
+
 
 proc newsletterStart*(db: DbConn) =
   ## Required proc. Will run on each program start
