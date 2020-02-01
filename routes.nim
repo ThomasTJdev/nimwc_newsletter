@@ -38,6 +38,15 @@
 
   post "/newsletter/signup":
     createTFD()
+    if @"password2" != "": # DONT TOUCH, HoneyPot: https://github.com/ThomasTJdev/nim_websitecreator/issues/43#issue-403507393
+      resp Http404
+
+    when not defined(dev):
+      when defined(recaptcha):
+        if useCaptcha:
+          if not await checkReCaptcha(@"g-recaptcha-response", c.req.ip):
+            redirect("/error/" & encodeUrl("Error: You need to verify, that you are not a robot!"))
+
     resp genMain(c, genNewsletterMain(c, newsletterSignUp(db, @"email", @"name")))
 
 

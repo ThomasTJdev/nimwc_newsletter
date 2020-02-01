@@ -17,10 +17,11 @@ import
 when defined(postgres): import db_postgres
 else:                   import db_sqlite
 
-import ../../nimwcpkg/resources/email/email_connection
-import ../../nimwcpkg/resources/session/user_data
-import ../../nimwcpkg/resources/utils/logging_nimwc
-import ../../nimwcpkg/resources/utils/plugins
+import ../../nimwcpkg/emails/emails
+import ../../nimwcpkg/sessions/sessions
+import ../../nimwcpkg/plugins/plugins
+import ../../nimwcpkg/utils/loggers
+import ../../nimwcpkg/webs/captchas
 
 let dict = loadConfig(replace(getAppDir(), "/nimwcpkg", "") & "/config/config.cfg")
 let emailSupport = dict.getSectionValue("SMTP","SMTPEmailSupport")
@@ -28,7 +29,7 @@ let title = dict.getSectionValue("Server","title")
 let website = dict.getSectionValue("Server","website")
 
 proc pluginInfo() =
-  let (n, v, d, u) = pluginExtractDetails("newsletter")
+  let (n, v, d, u) = pluginGetDetails("newsletter")
   echo " "
   echo "--------------------------------------------"
   echo "  Package:      " & n

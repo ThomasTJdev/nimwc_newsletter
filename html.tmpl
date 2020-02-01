@@ -10,7 +10,7 @@
   <div id="newsletterFront">
     <h1>Newsletter settings</h1>
 
-    # let (n, v, d, u) = pluginExtractDetails("newsletter")
+    # let (n, v, d, u) = pluginGetDetails("newsletter")
     <div id="pluginDetails">
       <hr>
       <div> <b>Package:</b> ${n}</div>
@@ -38,7 +38,7 @@
   <div class="subscribe">
     <h2>Include the following code to subscribe users</h2>
     <pre><code>
-&lt;div id=&quot;newsletterSubscribe&quot; class=&quot;box&quot; style=&quot;max-width: 300px;margin-left: auto; margin-right: auto;padding-top:20px;&quot;&gt;
+&lt;div id=&quot;newsletterSubscribe&quot; class=&quot;box&quot; style=&quot;max-width: 320px;margin-left: auto; margin-right: auto;padding-top:20px;&quot;&gt;
   &lt;form method=&quot;post&quot; action=&quot;/newsletter/signup&quot;&gt;
     &lt;label&gt;Name&lt;/label&gt;
     &lt;input type=&quot;text&quot; required name=&quot;name&quot; class=&quot;input is-small&quot;&gt;
@@ -46,9 +46,23 @@
     &lt;br&gt;
     &lt;label&gt;Email&lt;/label&gt;
     &lt;input type=&quot;email&quot; required name=&quot;email&quot; class=&quot;input is-small&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;password2&quot; style=&quot;display: none;&quot;&gt;
+    #when defined(recaptcha):
+    # if useCaptcha:
+    &lt;button type=&quot;button&quot; class=&quot;button is-link&quot; onclick=&quot;getElementById(&#39;recap&#39;).style.display=&#39;block&#39;;this.style.display = &#39;none&#39;;&quot; style=&quot;margin-top: 20px;&quot;&gt;Next&lt;/button&gt;
+      &lt;div id=&quot;recap&quot; style=&quot;display: none;&quot;&gt;
+        &lt;div id=&quot;recaptcha&quot;&gt;
+          &lt;div class=&quot;g-recaptcha&quot; data-sitekey=&quot;${recaptchaSiteKey}&quot; data-theme=&quot;light&quot; style=&quot;transform:scale(0.93);-webkit-transform:scale(0.93);transform-origin:0 0;-webkit-transform-origin:0 0;&quot;&gt;&lt;/div&gt;
+          &lt;script src=&quot;https://www.google.com/recaptcha/api.js&quot; async defer&gt;&lt;/script&gt;
+        &lt;/div&gt;
+      &lt;button type=&quot;submit&quot; class=&quot;button is-link&quot;&gt;Subscribe&lt;/button&gt;
+    &lt;/div&gt;
+    # end if
+    #else:
     &lt;br&gt;
     &lt;br&gt;
     &lt;button type=&quot;submit&quot; class=&quot;button is-link&quot;&gt;Subscribe&lt;/button&gt;
+    #end when
   &lt;/form&gt;
 &lt;/div&gt;
     </code></pre>
