@@ -54,7 +54,12 @@ function newsletterSend(test) {
     var email = $(".testemail").val();
     var message = $("#message").val();
     var subject = $(".subject").val();
-    
+
+    if (subject == "" || message == "") {
+      alert("Missing either subject or message.");
+      return;
+    }
+
     var data = {email: email, subject: subject, message: message}
 
     $.ajax({
