@@ -18,10 +18,16 @@ when defined(postgres): import db_postgres
 else:                   import db_sqlite
 
 import ../../nimwcpkg/emails/emails
+<<<<<<< HEAD
 import ../../nimwcpkg/sessions/sessions
 import ../../nimwcpkg/plugins/plugins
 import ../../nimwcpkg/utils/loggers
 import ../../nimwcpkg/webs/captchas
+=======
+import ../../nimwcpkg/plugins/plugins
+import ../../nimwcpkg/sessions/sessions
+import ../../nimwcpkg/utils/loggers
+>>>>>>> 9772465b85795ecf2bc159c9cf172814b423f0a4
 
 let dict = loadConfig(replace(getAppDir(), "/nimwcpkg", "") & "/config/config.cfg")
 let emailSupport = dict.getSectionValue("SMTP","SMTPEmailSupport")
